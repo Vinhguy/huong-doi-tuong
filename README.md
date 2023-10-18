@@ -1,2 +1,0 @@
-# huong doi tuong
- 
