@@ -5,32 +5,51 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SanPham {
+
+public class SanPham extends MyAbstractClass implements MyInterface  {
     private int id;
     private String tenSanPham;
     private double gia;
-    private String moTa;
+
     private int soLuong;
 
-    public SanPham(int id, String tenSanPham, double gia, String moTa, int soLuong) {
+    public SanPham(int id, String tenSanPham, double gia, int soLuong) {
         this.id = id;
         this.tenSanPham = tenSanPham;
         this.gia = gia;
-        this.moTa = moTa;
         this.soLuong = soLuong;
     }
 
-    // Getter methods for fields
+    public SanPham() {
 
-    public static void getAllSanPham() {
-        String jdbcURL = "jdbc:mysql://localhost:3306/cua_hang";
-        String username = "root";
-        String password = "choinhanh12";
+    }
+
+    // Getter methods for fields
+    public int getId() {
+        return id;
+    }
+
+    public String getTenSanPham() {
+        return tenSanPham;
+    }
+
+    public double getGia() {
+        return gia;
+    }
+
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+
+    public static  List<SanPham> getAllSanPham()  {
+        List<SanPham> sanPhamList = new ArrayList<>();
+
 
         try {
             // Establish a database connection
-            Connection connection = DriverManager.getConnection(jdbcURL, username, password);
-
+            Connection connection = null;
+            connection = DatabaseConnection.getConnection();
             // Prepare and execute SQL query
             String query = "SELECT * FROM sanpham";
             PreparedStatement statement = connection.prepareStatement(query);
@@ -43,11 +62,10 @@ public class SanPham {
                 double gia = resultSet.getDouble("gia");
                 int soLuong = resultSet.getInt("so_luong");
 
-                System.out.println("ID: " + id);
-                System.out.println("Tên Sản Phẩm: " + tenSanPham);
-                System.out.println("Giá: " + gia);
-                System.out.println("Số Lượng: " + soLuong);
-                System.out.println();
+
+                SanPham sanPham = new SanPham(id, tenSanPham, gia, soLuong);
+                sanPhamList.add(sanPham);
+
             }
 
             // Close resources
@@ -56,6 +74,15 @@ public class SanPham {
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
+
         }
+        return sanPhamList;
+    }
+    @Override
+    public void printout(){
+        System.out.println("ID: " + id);
+        System.out.println("Tên Sản Phẩm: " + tenSanPham);
+        System.out.println("Giá: " + gia);
     }
 }
+
