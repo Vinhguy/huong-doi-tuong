@@ -19,10 +19,10 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
         this.gia = gia;
         this.soLuong = soLuong;
     }
-
-    public SanPham() {
+    public SanPham(){
 
     }
+
 
     // Getter methods for fields
     public int getId() {
@@ -45,7 +45,6 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
     public static  List<SanPham> getAllSanPham()  {
         List<SanPham> sanPhamList = new ArrayList<>();
 
-
         try {
             // Establish a database connection
             Connection connection = null;
@@ -61,17 +60,12 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
                 String tenSanPham = resultSet.getString("ten_sanpham");
                 double gia = resultSet.getDouble("gia");
                 int soLuong = resultSet.getInt("so_luong");
-
-
                 SanPham sanPham = new SanPham(id, tenSanPham, gia, soLuong);
                 sanPhamList.add(sanPham);
 
             }
 
             // Close resources
-            resultSet.close();
-            statement.close();
-            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
 

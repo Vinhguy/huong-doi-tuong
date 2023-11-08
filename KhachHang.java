@@ -2,92 +2,75 @@ import java.sql.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
-class KhachHang extends MyAbstractClass{
-    private String id;
+class KhachHang extends MyAbstractClass {
+    private int id;
     private String name;
-    private String email;
-    private String phone;
+
     private static int balance;
-    public String getId() {
+    public int getId() {
         return id;
     }
     public String getName() {return name;}
-    public String getEmail() {
-        return email;
-    }
-    public String getPhone() {
-        return phone;
-    }
+
     public Integer getBalance(){return balance;}
-    private void changeBalance(int change) {
+    public static void changeBalance(int change) {
         balance += change;
     }
-    private void baomat(){
 
-    }
-
-    public static void BankAccount(){
-
-        try {
-            // Establish a database connection
-            Connection connection = null;
-            connection = DatabaseConnection.getConnection();
-
-            // Prepare and execute SQL query
-            String query = "SELECT * FROM khachhang";
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
-
-            while(resultSet.next()){
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("ho_ten");
-                int balance = resultSet.getInt("so_du");
-
-            }
-
-            resultSet.close();
-            statement.close();
-            connection.close();
-
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-    public static boolean LuuKhachHang(int CustomerId , String CustomerName, int CustomerBalance) {
+    public  void LuuKhachHang() {
             Scanner scanner = new Scanner(System.in);
 
             System.out.print("Nhập id khach hang : ");
-            int CustomerId = scanner.nextInt();
+            id = scanner.nextInt();
             scanner.nextLine();
 
             System.out.print("Nhập ten khach hang: ");
-            String CustomerName = scanner.nextLine();
+             name = scanner.nextLine();
 
             System.out.print("Nhập so du khach hang : ");
-            int CustomerBalance = scanner.nextInt();
+             int change = scanner.nextInt();
+
 
         try {
-            Connection connection = null;
-            connection = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO khachhang (id, ho_ten, so_du) VALUES (?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, CustomerId);
-            preparedStatement.setString(2, CustomerName);
-            preparedStatement.setInt(3, CustomerBalance);
+            Connection connection = DatabaseConnection.getConnection();
+            String query = "SELECT * FROM khachhang WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
 
-            int rowsAffected = preparedStatement.executeUpdate();
-            preparedStatement.close();
-            connection.close();
+            if (resultSet.next()) {
+                // Record with the given ID exists; update it
+                String updateSql = "UPDATE khachhang SET ho_ten = ?, so_du = ? WHERE id = ?";
+                PreparedStatement updateStatement = connection.prepareStatement(updateSql);
 
-            return rowsAffected > 0; // Trả về true nếu có dòng bị ảnh hưởng (dữ liệu đã được thêm)
+                 balance = resultSet.getInt("so_du");
+                changeBalance(change); // Add 'change' to the current balance
+                updateStatement.setString(1, name);
+                updateStatement.setInt(2, balance);
+                updateStatement.setInt(3, id);
 
+                System.out.println("Id cua khach hang la " + id);
+                System.out.println("Ten cua khach hang la " + name);
+                System.out.println("So du cua khach hang la " + balance);
+
+
+            } else {
+                // Record with the given ID does not exist; insert a new record
+                String insertSql = "INSERT INTO khachhang (id, ho_ten, so_du) VALUES (?, ?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertSql);
+                insertStatement.setInt(1, id);
+                insertStatement.setString(2, name);
+                insertStatement.setInt(3, change);
+                System.out.println("Id cua khach hang la " + id);
+                System.out.println("Ten cua khach hang la " + name);
+                System.out.println("So du cua khach hang la " + balance);
+
+
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+
         }
+
     }
 }

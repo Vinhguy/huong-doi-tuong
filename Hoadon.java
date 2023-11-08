@@ -1,39 +1,30 @@
+public class Hoadon {
+    private SanPham product;
+    private KhachHang customer;
+    private int quantity;
 
-public class Hoadon extends SanPham extends KhachHang implements MyInterface {
-
-    private SanPham sanPham;
-    private int soLuong;
-
-    public Hoadon(SanPham sanPham, int soLuong) {
-
-        this.sanPham = sanPham;
-        this.soLuong = soLuong;
+    public Hoadon(SanPham product, KhachHang customer, int quantity) {
+        this.product = product;
+        this.customer = customer;
+        this.quantity = quantity;
     }
 
+    public void generateBill() {
+        System.out.println("Hóa đơn của bạn:");
+        System.out.println("Sản phẩm: " + product.getTenSanPham());
+        System.out.println("Số lượng: " + quantity);
+        double totalCost = quantity * product.getGia();
+        System.out.println("Thành tiền: " + totalCost);
 
-    @Override
-    public int getId(){
-        return sanPham.getId();
-    }
+        int currentBalance = customer.getBalance();
+        System.out.println("Số dư hiện tại của khách hàng: " + currentBalance);
 
-
-    @Override
-    public String getTenSanPham() {
-        return sanPham.getTenSanPham();
-    }
-
-    @Override
-    public double getGia() {
-        return sanPham.getGia();
-    }
-
-    public double tinhTongTien() {
-        return sanPham.getGia() * soLuong;
-    }
-
-    public void printout() {
-        System.out.println("Tên sản phẩm: " + sanPham.getTenSanPham());
-        System.out.println("Số lượng: " + soLuong);
-        System.out.println("Tổng tiền: " + tinhTongTien());
+        if (totalCost > currentBalance) {
+            System.out.println("Không đủ tiền trong tài khoản để thanh toán.");
+        } else {
+            int newBalance = currentBalance - (int) totalCost;
+            customer.changeBalance(-1 * (int) totalCost);
+            System.out.println("Số dư sau thanh toán: " + newBalance);
+        }
     }
 }

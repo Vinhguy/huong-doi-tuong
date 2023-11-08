@@ -2,9 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class Main {
@@ -28,8 +26,10 @@ public class Main {
         // Ask the user to choose a product
         System.out.print("Nhập ID sản phẩm bạn muốn mua: ");
         int productId = scanner.nextInt();
+        scanner.nextLine();
         System.out.println("Nhap so luong ban muon mua ");
         int quantity = scanner.nextInt();
+        scanner.nextLine();
 
 
         // Find the selected product
@@ -48,17 +48,21 @@ public class Main {
                 quantity = scanner.nextInt();
             }
         }
-        if (selectedProduct != null) {
-            System.out.println("Hoa don cua ban la ");
-            selectedProduct.printout();
-            System.out.println("Tong gia thanh bang "+quantity*selectedProduct.getGia());
+        KhachHang khachHang = new KhachHang();
+        khachHang.LuuKhachHang();
 
-        } else {
-            System.out.println("Sản phẩm không tồn tại.");
-        }
-
+        Hoadon hoaDon = new Hoadon(selectedProduct, khachHang, quantity);
+        hoaDon.generateBill();
 
         scanner.close();
+            /*if (selectedProduct != null) {
+                System.out.println("Hoa don cua ban la ");
+                selectedProduct.printout();
+                System.out.println("Tong gia thanh bang "+quantity*selectedProduct.getGia());
+                System.out.println("So du moi cua ban con ");
+            } else {
+                System.out.println("Sản phẩm không tồn tại.");*/
     }
 }
+
 
