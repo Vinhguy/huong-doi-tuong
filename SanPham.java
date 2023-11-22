@@ -4,14 +4,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 
-public class SanPham extends MyAbstractClass implements MyInterface  {
+public class SanPham extends MyAbstractClass implements MyInterface {
     private int id;
     private String tenSanPham;
     private double gia;
 
     private int soLuong;
+
+    double totalCost = 0.0;
 
     public SanPham(int id, String tenSanPham, double gia, int soLuong) {
         this.id = id;
@@ -19,10 +23,10 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
         this.gia = gia;
         this.soLuong = soLuong;
     }
-    public SanPham(){
+
+    public SanPham() {
 
     }
-
 
     // Getter methods for fields
     public int getId() {
@@ -33,6 +37,10 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
         return tenSanPham;
     }
 
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
+    }
+
     public double getGia() {
         return gia;
     }
@@ -41,9 +49,11 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
         return soLuong;
     }
 
+    List<SanPham> sanPhamList = new ArrayList<>();
+    List<SanPham> selectedProducts = null;
 
-    public static  List<SanPham> getAllSanPham()  {
-        List<SanPham> sanPhamList = new ArrayList<>();
+    public List<SanPham> getAllSanPham() {
+
 
         try {
             // Establish a database connection
@@ -56,10 +66,10 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
 
             // Process the query result and print product details
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String tenSanPham = resultSet.getString("ten_sanpham");
-                double gia = resultSet.getDouble("gia");
-                int soLuong = resultSet.getInt("so_luong");
+                id = resultSet.getInt("id");
+                tenSanPham = resultSet.getString("ten_sanpham");
+                gia = resultSet.getDouble("gia");
+                soLuong = resultSet.getInt("so_luong");
                 SanPham sanPham = new SanPham(id, tenSanPham, gia, soLuong);
                 sanPhamList.add(sanPham);
 
@@ -72,11 +82,124 @@ public class SanPham extends MyAbstractClass implements MyInterface  {
         }
         return sanPhamList;
     }
-    @Override
-    public void printout(){
+
+    public void printout() {
         System.out.println("ID: " + id);
         System.out.println("Tên Sản Phẩm: " + tenSanPham);
+        System.out.println("Số lượng: "+soLuong);
         System.out.println("Giá: " + gia);
     }
+
+    public List<SanPham> chonSanpham() {
+        Scanner scanner = new Scanner(System.in);
+
+
+        boolean lam = true;
+        while (lam) {
+            System.out.println("Danh sách sản phẩm có sẵn:");
+            List<SanPham> sanPhamList = getAllSanPham();
+            for (SanPham product : sanPhamList) {
+                System.out.println("ID: " + product.getId() + ", Tên sản phẩm: " + product.getTenSanPham() +
+                        ", Giá: " + product.getGia() + ", Số lượng: " + product.getSoLuong());
+            }
+
+            int trueProductId = 0;
+            int quantity = 0;
+            boolean validInput = false;
+            SanPham selectedProduct = null;
+
+            while (!validInput) {
+                System.out.print("Nhập ID sản phẩm bạn muốn mua (hoặc nhập exit để kết thúc mua hàng): ");
+                String productIdStr = scanner.nextLine();
+
+                if (productIdStr.equals("exit")) {
+                    lam = false; // Kết thúc mua hàng
+                    break;
+                }
+
+                try {
+                    trueProductId = Integer.parseInt(productIdStr);
+
+                    // Check if trueProductId is a valid product ID
+                    boolean productFound = false;
+                    for (SanPham product : sanPhamList) {
+                        if (product.getId() == trueProductId) {
+                            selectedProduct = product;  // Store the selected product
+                            productFound = true;
+                            break;
+                        }
+                    }
+                    if (!productFound) {
+                        System.out.println("Sản phẩm không tồn tại. Vui lòng nhập lại.");
+                    } else {
+                        validInput = true;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("ID sản phẩm phải là một số nguyên. Vui lòng nhập lại.");
+                }
+            }
+
+            if (lam) {
+                validInput = false; // Reset for quantity input
+
+                while (!validInput) {
+                    System.out.print("Nhập số lượng bạn muốn mua: ");
+                    String quantityStr = scanner.nextLine();
+
+                    try {
+                        quantity = Integer.parseInt(quantityStr);
+                        if (quantity > 0 && quantity <= selectedProduct.getSoLuong()) {
+                            // Quantity is valid and within the available stock
+                            selectedProduct.setSoLuong(quantity);
+                            validInput = true;
+                        } else {
+                            System.out.println("Số lượng không hợp lệ hoặc vượt quá số lượng tồn kho.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Số lượng phải là một số nguyên. Vui lòng nhập lại.");
+                    }
+                }
+
+                selectedProducts.add(selectedProduct);
+            }
+        }
+
+
+        return selectedProducts;
+    }
+    public static double deXuatMuaHang() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(100);
+
+        double discount = 0.0;
+        if (randomNumber < 20) {
+            discount = 0.2;
+        } else if (randomNumber < 50) {
+            discount = 0.3;
+        } else if (randomNumber < 80) {
+            discount = 0.5;
+        } else {
+            discount = 0.7;
+        }
+
+        System.out.println("Chúc mừng bạn đã trúng giảm giá " + (discount * 100) + "% cho đơn hàng của bạn!");
+        return discount;
+    }
+
+
+    public void inhoadon() {
+        System.out.println("Danh sách sản phẩm trong hóa đơn:");
+        for (SanPham product : selectedProducts) {
+            System.out.println("ID: " + product.getId() + ", Tên sản phẩm: " + product.getTenSanPham() +
+                    ", Giá: " + product.getGia() + ", Số lượng: " + product.getSoLuong());
+
+        }
+        System.out.println("Tổng giá trước khi giảm giá: " );
+        System.out.println("Tổng giá sau khi giảm giá (" + deXuatMuaHang() + "%): là "  );
+    }
 }
+
+
+
+
 
