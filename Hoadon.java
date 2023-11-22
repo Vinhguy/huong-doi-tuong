@@ -1,26 +1,26 @@
 import java.util.List;
 
-abstract class HoaDon {
-    private List<SanPham> danhSachSanPham;
-    private double tongGia;
+public class HoaDon {
 
-    public HoaDon(List<SanPham> danhSachSanPham) {
-        this.danhSachSanPham = danhSachSanPham;
-        this.tongGia = 0.0;
-    }
 
-    public double tinhTongGia() {
-        for (SanPham sanPham : danhSachSanPham) {
-            tongGia += sanPham.getGia() * sanPham.getSoLuong();
+
+    public static double processPayment(List<SanPham> selectedProducts) {
+        double totalCost = 0.0;
+
+        System.out.println("Danh sách sản phẩm trong hóa đơn:");
+        for (SanPham product : selectedProducts) {
+            System.out.println("ID: " + product.getId() + ", Tên sản phẩm: " + product.getTenSanPham() +
+                    ", Giá: " + product.getGia() + ", Số lượng: " + product.getSoLuong());
+
+            totalCost += product.getGia() * product.getSoLuong();
         }
-        return tongGia;
-    }
 
+        double discount = SanPham.deXuatMuaHang();
+        double discountedCost = totalCost * (1 - discount);
 
+        System.out.println("Tổng giá trước khi giảm giá: " + totalCost);
+        System.out.println("Tổng giá sau khi giảm giá (" + discount * 100 + "%): là " + discountedCost);
 
-   public void ThongTinKhachHang() {
+        return discountedCost;
 
-    }
-
-
-}
+}}

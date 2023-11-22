@@ -50,7 +50,7 @@ public class SanPham extends MyAbstractClass implements MyInterface {
     }
 
     List<SanPham> sanPhamList = new ArrayList<>();
-    List<SanPham> selectedProducts = null;
+    List<SanPham> selectedProducts = new ArrayList<>();
 
     public List<SanPham> getAllSanPham() {
 
@@ -72,7 +72,6 @@ public class SanPham extends MyAbstractClass implements MyInterface {
                 soLuong = resultSet.getInt("so_luong");
                 SanPham sanPham = new SanPham(id, tenSanPham, gia, soLuong);
                 sanPhamList.add(sanPham);
-
             }
 
             // Close resources
@@ -95,16 +94,16 @@ public class SanPham extends MyAbstractClass implements MyInterface {
 
 
         boolean lam = true;
-        while (lam) {
+        List<SanPham> sanPhamList = getAllSanPham();
+
+            while (lam) {
             System.out.println("Danh sách sản phẩm có sẵn:");
-            List<SanPham> sanPhamList = getAllSanPham();
             for (SanPham product : sanPhamList) {
-                System.out.println("ID: " + product.getId() + ", Tên sản phẩm: " + product.getTenSanPham() +
-                        ", Giá: " + product.getGia() + ", Số lượng: " + product.getSoLuong());
+                product.printout();
             }
 
-            int trueProductId = 0;
-            int quantity = 0;
+            int trueProductId;
+            int quantity;
             boolean validInput = false;
             SanPham selectedProduct = null;
 
@@ -149,7 +148,7 @@ public class SanPham extends MyAbstractClass implements MyInterface {
                     try {
                         quantity = Integer.parseInt(quantityStr);
                         if (quantity > 0 && quantity <= selectedProduct.getSoLuong()) {
-                            // Quantity is valid and within the available stock
+
                             selectedProduct.setSoLuong(quantity);
                             validInput = true;
                         } else {
@@ -161,10 +160,10 @@ public class SanPham extends MyAbstractClass implements MyInterface {
                 }
 
                 selectedProducts.add(selectedProduct);
+
             }
         }
-
-
+        inhoadon();
         return selectedProducts;
     }
     public static double deXuatMuaHang() {
@@ -188,14 +187,15 @@ public class SanPham extends MyAbstractClass implements MyInterface {
 
 
     public void inhoadon() {
+
         System.out.println("Danh sách sản phẩm trong hóa đơn:");
         for (SanPham product : selectedProducts) {
             System.out.println("ID: " + product.getId() + ", Tên sản phẩm: " + product.getTenSanPham() +
                     ", Giá: " + product.getGia() + ", Số lượng: " + product.getSoLuong());
+            totalCost = product.getGia()* product.getSoLuong();
 
         }
-        System.out.println("Tổng giá trước khi giảm giá: " );
-        System.out.println("Tổng giá sau khi giảm giá (" + deXuatMuaHang() + "%): là "  );
+        System.out.println("Tổng giá trước khi giảm giá: " +totalCost);
     }
 }
 

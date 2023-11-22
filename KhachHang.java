@@ -12,7 +12,12 @@ class KhachHang extends MyAbstractClass {
     }
     public String getName() {return name;}
 
-    public Integer getBalance(){return balance;}
+    public int getBalance(){return balance;}
+
+    public static void setBalance(int balance) {
+        KhachHang.balance = balance;
+    }
+
     public static void changeBalance(int change) {
         balance += change;
     }
@@ -33,7 +38,7 @@ class KhachHang extends MyAbstractClass {
                 scanner.next(); // Consume invalid input
             }
         }
-            System.out.print("Nhập so du khach hang muon them : ");
+            System.out.print("Nhập so du khach hang muon them : ");// Nhập số âm để giảm số dư wtf đừng hỏi
              int change = scanner.nextInt();
              scanner.nextLine();
         try {
@@ -44,7 +49,7 @@ class KhachHang extends MyAbstractClass {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                // Record with the given ID exists; update it
+                // id có tồn tại
 
                 String updateSql = "UPDATE khachhang SET ho_ten = ?, so_du = ? WHERE id = ?";
                 PreparedStatement updateStatement = connection.prepareStatement(updateSql);
@@ -55,10 +60,11 @@ class KhachHang extends MyAbstractClass {
                 updateStatement.setInt(3, id);
                 changeBalance(change);
 
+
                 printout(id,balance,name);
 
             } else {
-                // Record with the given ID does not exist; insert a new record
+                // thêm mới khi id không tồn tại
                 String insertSql = "INSERT INTO khachhang (id, ho_ten, so_du) VALUES (?, ?, ?)";
                 PreparedStatement insertStatement = connection.prepareStatement(insertSql);
                 System.out.println("Nhap ten khach hang ");
@@ -68,8 +74,8 @@ class KhachHang extends MyAbstractClass {
                 insertStatement.setInt(3, balance);
                 changeBalance(change);
 
-                printout(id,balance,name);
 
+                printout(id,balance,name);
 
             }
         } catch (SQLException e) {
@@ -80,8 +86,8 @@ class KhachHang extends MyAbstractClass {
     }
 
     void printout(int id,int balance,String name){
-        System.out.println("Id cua khach hang la "+id);
-        System.out.println("Ten cua khach hang la "+name);
-        System.out.println("So du cua khach hang la "+balance);
+        System.out.println("Id của khách hàng là "+id);
+        System.out.println("Tên của khách hàng là "+name);
+        System.out.println("Số dư của khách hàng là "+balance);
     }
 }

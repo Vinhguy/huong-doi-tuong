@@ -10,6 +10,7 @@ public class Main {
         SanPham sanPham = new SanPham();
         List<SanPham> selectedProducts = new ArrayList<>();
         HangXuatKhau hangXuatKhau = new HangXuatKhau();
+        HangBanhKeo hangBanhKeo = new HangBanhKeo();
 
 
         while(true) {
@@ -18,9 +19,9 @@ public class Main {
         System.out.println("2. Chọn mua hàng xuất khẩu");
         System.out.println("3. Thêm sản phẩm hàng xuất khẩu");
         System.out.println("4. Xóa sản phẩm hàng xuất khẩu ");
-        System.out.println("5. Chọn mua hàng mỹ phẩm");
-        System.out.println("6. Thoát");
-
+        System.out.println("5. Chọn mua bánh kẹo ");
+        System.out.println("6. Thanh toán");
+        System.out.println("7. Thoát");
 
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -37,11 +38,20 @@ public class Main {
                 case 4:
                     System.out.println("Nhập id mặt hàng cần xóa");
                     int i = scanner.nextInt();
+                    scanner.nextLine();
                     hangXuatKhau.xoaSanPham(i);
+                    break;
                 case 5:
-
+                    selectedProducts.addAll(hangBanhKeo.muaSanpham());
                     break;
                 case 6:
+                    double totalcost = HoaDon.processPayment(selectedProducts);
+                    double newbalance = khachHang.getBalance()-totalcost;
+                    System.out.println("Số dư còn lại của khách hàng là "+newbalance);
+                    khachHang.setBalance((int) newbalance);
+
+                    break;
+                case 7:
                     System.out.println("Kết thúc chương trình ");
                     System.exit(0);
                 default:

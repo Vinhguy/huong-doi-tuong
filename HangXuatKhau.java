@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -6,7 +7,7 @@ public class HangXuatKhau extends SanPham implements MyInterface{
     private String xuatXu;
     private List<HangXuatKhau> danhSachSPXX = new ArrayList<>();
     List<HangXuatKhau> selectedProducts = new ArrayList<>();
-    private double temp = 0.0;
+
     private int quantity;
     Scanner scanner = new Scanner(System.in);
 
@@ -36,20 +37,27 @@ public class HangXuatKhau extends SanPham implements MyInterface{
         return quantity;
     }
 
-    public void setXuatXu(String xuatXu) {
-        this.xuatXu = xuatXu;
-    }
 
     public void themSanPham() {
         System.out.println("Nhập id, giá, tên sản phẩm, số lượng và xuất xứ (cách nhau bằng dấu cách): ");
+        try{
         int id = scanner.nextInt();
         double gia = scanner.nextDouble();
+        scanner.nextLine();
         String tenSanPham = scanner.nextLine();
         int soLuong = scanner.nextInt();
+        scanner.nextLine();
         String xuatXu = scanner.nextLine();
+
         HangXuatKhau hangxk = new HangXuatKhau(id, tenSanPham, gia, soLuong, xuatXu);
         danhSachSPXX.add(hangxk);
+        }
+        catch (InputMismatchException e){
+            System.out.println("Nhập sai định dạng");
+            themSanPham();
+        }
     }
+
 
     public void xoaSanPham(int id) {
         for (int i = 0; i < danhSachSPXX.size(); i++) {
@@ -131,13 +139,13 @@ public class HangXuatKhau extends SanPham implements MyInterface{
 
     @Override
     public void inhoadon() {
-        double discount = deXuatMuaHang();
+
         System.out.println("Danh sách sản phẩm trong hóa đơn:");
         for (HangXuatKhau purchasedProduct : selectedProducts) {
             System.out.println("ID: " + purchasedProduct.getId() + ", Tên sản phẩm: " + purchasedProduct.getTenSanPham() +
                     ", Giá: " + purchasedProduct.getGia() + ", Số lượng: " + purchasedProduct.getSoLuong() + ", Xuất xứ : " + purchasedProduct.getXuatXu());
         }
         System.out.println("Tổng giá trước khi giảm giá: " + totalCost);
-        System.out.println("Tổng giá sau khi giảm giá (" + discount * 100 + "%): là " + totalCost * (1 - discount));
+
     }
 }
